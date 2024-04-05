@@ -2,10 +2,12 @@ use std::borrow::Borrow;
 
 use crate::restrict::{Restrict, RestrictOwned, RestrictView};
 
-pub struct NonEmptyString(String);
+pub struct NonEmptyString {
+    internal: String,
+}
 impl AsRef<str> for NonEmptyString {
     fn as_ref(&self) -> &str {
-        self.0.borrow()
+        self.internal.borrow()
     }
 }
 impl Restrict for NonEmptyString {
@@ -17,19 +19,21 @@ impl Restrict for NonEmptyString {
     }
 
     unsafe fn unchecked_restrict(value: Self::T) -> Self {
-        Self(value)
+        Self { internal: value }
     }
 
     fn unrestrict(self) -> Self::T {
-        self.0
+        self.internal
     }
 }
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct NonEmptyStr(str);
+pub struct NonEmptyStr {
+    internal: str,
+}
 impl AsRef<str> for NonEmptyStr {
     fn as_ref(&self) -> &str {
-        &self.0
+        &self.internal
     }
 }
 impl RestrictView for NonEmptyStr {
@@ -46,7 +50,7 @@ impl RestrictView for NonEmptyStr {
 
 impl Borrow<NonEmptyStr> for NonEmptyString {
     fn borrow(&self) -> &NonEmptyStr {
-        unsafe { NonEmptyStr::unchecked_restrict(self.0.borrow()) }
+        unsafe { NonEmptyStr::unchecked_restrict(self.internal.borrow()) }
     }
 }
 impl RestrictOwned for NonEmptyString {

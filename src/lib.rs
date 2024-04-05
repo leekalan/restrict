@@ -1,5 +1,4 @@
 pub mod non_empty_string;
-pub mod non_zero;
 pub mod owned_restricted_view;
 pub mod restrict;
 
